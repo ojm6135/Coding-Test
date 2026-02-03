@@ -1,6 +1,5 @@
 import java.io.*;
 import java.util.*;
-import java.util.function.Function;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -10,16 +9,12 @@ public class Main {
         int N = Integer.parseInt(st.nextToken());
         int K = Integer.parseInt(st.nextToken());
         int[] cnt = new int[100_001];
-        boolean[] visited = new boolean[100_001];
 
-        List<Function<Integer, Integer>> functions = Arrays.asList(
-            x -> x * 2,
-            x -> x - 1,
-            x -> x + 1
-        );
+        Arrays.fill(cnt, -1);
+        cnt[N] = 0;
+
         Queue<Integer> q = new ArrayDeque<>();
         q.add(N);
-        visited[N] = true;
 
         int curr, next;
 
@@ -30,24 +25,22 @@ public class Main {
                 break;
             }
 
-            for (int i = 0; i < functions.size(); i++) {
-                next = functions.get(i).apply(curr);
-
-                if (next < 0 || next > 100_000) {
-                    continue;
-                }
-
-                if (visited[next]) {
-                    continue;
-                }
-
-                visited[next] = true;
+            next = curr * 2;
+            if (next <= 100_000 && cnt[next] == -1) {
                 q.add(next);
                 cnt[next] = cnt[curr];
+            }
 
-                if (i > 0) {
-                    cnt[next]++;
-                }
+            next = curr - 1;
+            if (next >= 0 && cnt[next] == -1) {
+                q.add(next);
+                cnt[next] = cnt[curr] + 1;
+            }
+
+            next = curr + 1;
+            if (next <= 100_000 && cnt[next] == -1) {
+                q.add(next);
+                cnt[next] = cnt[curr] + 1;
             }
         }
 

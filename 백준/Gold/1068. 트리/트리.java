@@ -2,62 +2,75 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+    static boolean[] broken;
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        int n = Integer.parseInt(br.readLine().trim());
-        Map<Integer, List<Integer>> nodes = new HashMap<>();
-        int i, p, root = -1;
+        int N = Integer.parseInt(br.readLine());
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int deleted = Integer.parseInt(br.readLine());
+        List<Integer>[] tree = new ArrayList[N];
+        Queue<Integer> q = new ArrayDeque<>();
+        boolean[] visited = new boolean[N];
+        int root = 0;
+        int u = 0;
+        int cnt = 0;
 
-        for (i = 0; i < n; i++) {
-            nodes.put(i, new ArrayList<>());
+        for (int i = 0; i < N; i++) {
+            tree[i] = new ArrayList<>();
         }
 
-        int[] parents = Arrays.stream(br.readLine().trim().split(" "))
-                .mapToInt(Integer::parseInt)
-                .toArray();
+        for (int i = 0; i < N; i++) {
+            u = Integer.parseInt(st.nextToken());
 
-        for (i = 0; i < n; i++) {
-            p = parents[i];
-
-            if (p == -1) {
+            if (u == -1) {
                 root = i;
+                q.add(root);
                 continue;
             }
 
-            nodes.get(p).add(i);
+            tree[u].add(i);
         }
 
-        Integer deleted = Integer.parseInt(br.readLine().trim());
-
         if (deleted == root) {
-            bw.write("0");
+            System.out.println(0);
             br.close();
-            bw.close();
             return;
         }
 
-        List<Integer> childList;
-        int leafCnt = 0;
-        Stack<Integer> stack = new Stack<>();
-        stack.add(root);
+        while (!q.isEmpty()) {
+            u = q.poll();
 
-        while (!stack.isEmpty()) {
-            childList = nodes.get(stack.pop());
-            childList.remove(deleted);
-
-            if (childList.size() == 0) {
-                leafCnt++;
+            if (visited[u]) {
                 continue;
             }
 
-            stack.addAll(childList);
+            visited[u] = true;
+
+            if (tree[u].isEmpty()) {
+                cnt++;
+            }
+
+            for (int v : tree[u]) {
+                if (v == deleted) {
+                    if (tree[u].size() == 1) {
+                        cnt++;
+                    }
+
+                    continue;
+                }
+
+                if (visited[v]) {
+                    continue;
+                }
+
+                q.add(v);
+            }
         }
 
-        bw.write(leafCnt + "");
+        System.out.println(cnt);
 
         br.close();
-        bw.close();
     }
 }

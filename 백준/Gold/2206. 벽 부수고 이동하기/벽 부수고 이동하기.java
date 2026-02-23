@@ -5,9 +5,7 @@ import java.util.*;
  * 풀이 방법
  *
  * 1. bfs를 수행하며 과거 벽 부숨 여부와 다음 지점의 벽 여부를 통해 방문 지점의 벽 부숨 여부 갱신
- * 2. 이전에 벽을 부수고 방문한 지점을 벽을 부수지 않고 갈 수 있는 경우, 재탐색 필요
- *    (시간은 증가만 하기 때문에 고려 X)
- * 3. 목적지는 항상 최솟값으로 갱신
+ * 2. 이전에 벽을 부수고 방문한 지점을 벽을 부수지 않고 갈 수 있는 경우, 재탐색 필요 (시간은 증가만 하기 때문에 고려 X)
  */
 public class Main {
     static class Node {
@@ -49,13 +47,19 @@ public class Main {
         int t = 1;
         boolean isWall;
         int size;
+        boolean finished = false;
 
-        while (!q.isEmpty()) {
+        while (!q.isEmpty() && !finished) {
             t++;
             size = q.size();
 
             for (int i = 0; i < size; i++) {
                 curr = q.poll();
+
+                if (curr.r == N - 1 && curr.c == M - 1) {
+                    finished = true;
+                    break;
+                }
 
                 for (int[] dir : dirs) {
                     nr = curr.r + dir[0];
@@ -85,20 +89,15 @@ public class Main {
                             continue;
                         }
                     }
-                    
-                    if (nr == N - 1 && nc == M - 1) {
-                        dist[nr][nc] = Math.min(dist[nr][nc], t);
-                    } else {
-                        dist[nr][nc] = t;
-                    }
 
+                    dist[nr][nc] = t;
                     broken[nr][nc] = broken[curr.r][curr.c] || isWall;
                     q.add(new Node(nr, nc));
                 }
             }
         }
 
-        System.out.println(dist[N - 1][M - 1] != Integer.MAX_VALUE ? dist[N - 1][M - 1] : -1);
+        System.out.println(finished ? dist[N - 1][M - 1] : -1);
 
         br.close();
     }

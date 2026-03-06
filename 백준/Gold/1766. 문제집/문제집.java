@@ -29,21 +29,18 @@ public class Main {
 		}
 
 		for (int i = 1; i <= N; i++) {
-			if (inDegree[i] != 0) {
-				continue;
+			if (inDegree[i] == 0) {
+				pq.add(i);
 			}
+		}
 
-			pq.add(i);
+		while (!pq.isEmpty()) {
+			prob = pq.poll();
+			sb.append(prob).append(" ");
 
-			while (!pq.isEmpty()) {
-				prob = pq.poll();
-				inDegree[prob] = -1;
-				sb.append(prob).append(" ");
-
-				for (int p : graph[prob]) {
-					if (--inDegree[p] == 0 && p < i) {
-						pq.add(p);
-					}
+			for (int p : graph[prob]) {
+				if (--inDegree[p] == 0) {
+					pq.add(p);
 				}
 			}
 		}
